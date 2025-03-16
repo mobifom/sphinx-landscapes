@@ -1,0 +1,110 @@
+/* apps/frontend/src/styles/open-props-custom.css */
+@import 'open-props/style';
+@import 'open-props/normalize';
+
+:root {
+  /* Custom surface colors */
+  --surface-1: var(--stone-1);
+  --surface-2: var(--stone-2);
+  --surface-3: var(--stone-3);
+  --surface-4: var(--stone-4);
+
+  /* Brand colors */
+  --brand-light: var(--green-3);
+  --brand: var(--green-6);
+  --brand-dark: var(--green-8);
+
+  /* Accent colors */
+  --accent-light: var(--yellow-3);
+  --accent: var(--yellow-6);
+  --accent-dark: var(--yellow-8);
+
+  /* Font settings */
+  --font-heading: 'Merriweather', serif;
+  --font-body: 'Open Sans', sans-serif;
+
+  /* Custom animations */
+  --animation-fade-in: fade-in 0.5s var(--ease-in-out-3);
+  --animation-slide-in: slide-in 0.5s var(--ease-in-out-3);
+
+  /* Custom shadows */
+  --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-elevation: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Custom animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Utility classes */
+.container {
+  width: 100%;
+  max-width: var(--size-xl);
+  margin-inline: auto;
+  padding-inline: var(--size-3);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--size-5);
+  }
+}
+
+/* Component styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--size-2) var(--size-5);
+  border-radius: var(--radius-2);
+  font-weight: var(--font-weight-6);
+  transition: background-color 0.2s var(--ease-out-3);
+}
+
+.btn-primary {
+  background-color: var(--brand);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--brand-dark);
+}
+
+.btn-secondary {
+  background-color: var(--surface-2);
+  color: var(--text-1);
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface-3);
+}
+
+.card {
+  background-color: var(--surface-1);
+  border-radius: var(--radius-3);
+  box-shadow: var(--shadow-soft);
+  padding: var(--size-4);
+  transition: transform 0.2s var(--ease-out-3), box-shadow 0.2s var(--ease-out-3);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-elevation);
+}
