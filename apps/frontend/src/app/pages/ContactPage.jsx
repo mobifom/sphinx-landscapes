@@ -1,13 +1,10 @@
 // apps/frontend/src/app/pages/ContactPage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
 import { PageHeader } from '../components/common/PageHeader';
-import { Button } from '../components/common';
 import { ContactForm } from '../components/contact/ContactForm';
 
 const ContactPage = () => {
-  const [formSubmitted, setFormSubmitted] = useState(false);
-
   useEffect(() => {
     // Set page title
     document.title = 'Contact Us | Sphinx Landscapes';
@@ -15,21 +12,6 @@ const ContactPage = () => {
     // Scroll to top on page load
     window.scrollTo(0, 0);
   }, []);
-
-  const handleFormSubmit = (formData) => {
-    // In a real app, this would send the data to an API
-    console.log('Form submitted:', formData);
-
-    // Simulate API call
-    setTimeout(() => {
-      setFormSubmitted(true);
-
-      // Reset form after 5 seconds
-      setTimeout(() => {
-        setFormSubmitted(false);
-      }, 5000);
-    }, 1000);
-  };
 
   return (
     <main>
@@ -170,7 +152,7 @@ const ContactPage = () => {
             <div>
               <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
                 <h2 className="text-2xl font-heading font-semibold mb-6">Send Us a Message</h2>
-                <ContactForm onSubmit={handleFormSubmit} submitted={formSubmitted} />
+                <ContactForm />
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 // apps/frontend/src/app/pages/ServiceDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { FaCheck, FaTools, FaRegLightbulb, FaRegClock, FaRegSmile, FaQuestionCircle, FaArrowRight } from 'react-icons/fa';
+import { FaCheck, FaTools, FaRegLightbulb, FaRegClock, FaRegSmile, FaQuestionCircle, FaArrowRight, FaLeaf } from 'react-icons/fa';
 import { Button } from '../components/common';
 import { PageHeader } from '../components/common/PageHeader';
 import { ServicesAPI } from '../utils/api';
@@ -26,13 +26,13 @@ const ServiceDetailPage = () => {
     setError(null);
 
     try {
-      const serviceData = await ServicesAPI.getServiceBySlug(serviceId);
+      const response = await ServicesAPI.getServiceBySlug(serviceId);
 
-      if (serviceData && serviceData.data) {
+      if (response && response.data) {
         // Set page title
-        document.title = `${serviceData.data.name} | Sphinx Landscapes`;
+        document.title = `${response.data.name} | Sphinx Landscapes`;
 
-        setService(serviceData.data);
+        setService(response.data);
       } else {
         // If no data is returned, handle as not found
         setError('Service not found');

@@ -1,93 +1,23 @@
 // apps/frontend/src/app/components/contact/ContactForm.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FaPaperPlane, FaCheck } from 'react-icons/fa';
 import { Button } from '../common';
+import useContactForm from '../../hooks/useContactForm';
 
-export const ContactForm = ({ onSubmit, submitted = false }) => {
-  const initialFormState = {
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  };
-
-  const [formData, setFormData] = useState(initialFormState);
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Reset form when submitted prop changes to true
-  useEffect(() => {
-    if (submitted) {
-      setFormData(initialFormState);
-      setIsSubmitting(false);
-    }
-  }, [submitted]);
-
-  const validate = () => {
-    const newErrors = {};
-
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    // Subject validation
-    if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required';
-    }
-
-    // Message validation
-    if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message is too short (minimum 10 characters)';
-    }
-
-    // Phone validation (optional)
-    if (formData.phone && !/^[0-9\-\+\(\) ]+$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: '',
-      });
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (validate()) {
-      setIsSubmitting(true);
-      onSubmit(formData);
-    }
-  };
+export const ContactForm = () => {
+  const {
+    formData,
+    handleChange,
+    handleSubmit,
+    errors,
+    isSubmitting,
+    isSubmitted,
+    submitError
+  } = useContactForm();
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      {submitted ? (
+      {isSubmitted ? (
         <div className="p-4 mb-6 flex items-center bg-green-50 border-l-4 border-green-500 text-green-700">
           <FaCheck className="text-green-500 mr-3" />
           <div>
@@ -96,6 +26,15 @@ export const ContactForm = ({ onSubmit, submitted = false }) => {
           </div>
         </div>
       ) : null}
+
+      {submitError && (
+        <div className="p-4 mb-6 flex items-center bg-red-50 border-l-4 border-red-500 text-red-700">
+          <div>
+            <p className="font-medium">An error occurred</p>
+            <p>{submitError}</p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Name Field */}
@@ -113,7 +52,7 @@ export const ContactForm = ({ onSubmit, submitted = false }) => {
               errors.name ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Your name"
-            disabled={isSubmitting || submitted}
+            disabled={isSubmitting}
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-500">{errors.name}</p>
@@ -135,7 +74,7 @@ export const ContactForm = ({ onSubmit, submitted = false }) => {
               errors.email ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Your email address"
-            disabled={isSubmitting || submitted}
+            disabled={isSubmitting}
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-500">{errors.email}</p>
@@ -157,7 +96,7 @@ export const ContactForm = ({ onSubmit, submitted = false }) => {
               errors.phone ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Your phone number"
-            disabled={isSubmitting || submitted}
+            disabled={isSubmitting}
           />
           {errors.phone && (
             <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
@@ -177,7 +116,7 @@ export const ContactForm = ({ onSubmit, submitted = false }) => {
             className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
               errors.subject ? 'border-red-500' : 'border-gray-300'
             }`}
-            disabled={isSubmitting || submitted}
+            disabled={isSubmitting}
           >
             <option value="">Select a subject</option>
             <option value="General Inquiry">General Inquiry</option>
@@ -206,7 +145,7 @@ export const ContactForm = ({ onSubmit, submitted = false }) => {
               errors.message ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="How can we help you?"
-            disabled={isSubmitting || submitted}
+            disabled={isSubmitting}
           ></textarea>
           {errors.message && (
             <p className="mt-1 text-sm text-red-500">{errors.message}</p>
@@ -219,7 +158,7 @@ export const ContactForm = ({ onSubmit, submitted = false }) => {
             type="submit"
             variant="primary"
             size="large"
-            disabled={isSubmitting || submitted}
+            disabled={isSubmitting}
             className="w-full flex justify-center items-center"
           >
             {isSubmitting ? (

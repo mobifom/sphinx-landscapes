@@ -1,40 +1,31 @@
 // apps/frontend/src/app/components/quote/QuoteForm.jsx
-import React, { useState } from 'react';
-import { FaPaperPlane, FaUser, FaEnvelope, FaPhone, FaHome, FaRuler, FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from 'react-icons/fa';
+import React from 'react';
+import { FaPaperPlane, FaUser, FaHome, FaTools, FaInfoCircle } from 'react-icons/fa';
 import { Button } from '../common';
+import useQuoteForm from '../../hooks/useQuoteForm';
 
-export const QuoteForm = ({ onSubmit }) => {
-  const initialFormState = {
-    // Contact Information
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+export const QuoteForm = ({ onSubmitSuccess }) => {
+  const {
+    formData,
+    currentStep,
+    handleChange,
+    handleNext,
+    handlePrevious,
+    handleSubmit,
+    errors,
+    isSubmitting,
+    isSubmitted,
+    submitError
+  } = useQuoteForm();
 
-    // Property Information
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    propertyType: '',
-    propertySize: '',
+  // If form is successfully submitted, notify parent component
+  React.useEffect(() => {
+    if (isSubmitted && onSubmitSuccess) {
+      onSubmitSuccess();
+    }
+  }, [isSubmitted, onSubmitSuccess]);
 
-    // Project Details
-    serviceType: [],
-    projectDescription: '',
-    timeframe: '',
-    budget: '',
-
-    // Additional Information
-    howDidYouHear: '',
-    additionalComments: '',
-  };
-
-  const [formData, setFormData] = useState(initialFormState);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  // Service options
   const serviceOptions = [
     { id: 'landscape-design', label: 'Landscape Design' },
     { id: 'hardscaping', label: 'Hardscaping (Patios, Walkways, etc.)' },
@@ -47,6 +38,7 @@ export const QuoteForm = ({ onSubmit }) => {
     { id: 'other', label: 'Other' },
   ];
 
+  // Property type options
   const propertyTypeOptions = [
     { value: 'residential', label: 'Residential' },
     { value: 'commercial', label: 'Commercial' },
@@ -54,6 +46,7 @@ export const QuoteForm = ({ onSubmit }) => {
     { value: 'other', label: 'Other' },
   ];
 
+  // Property size options
   const propertySizeOptions = [
     { value: 'small', label: 'Small (Less than 1,000 sq ft)' },
     { value: 'medium', label: 'Medium (1,000 - 5,000 sq ft)' },
@@ -62,6 +55,7 @@ export const QuoteForm = ({ onSubmit }) => {
     { value: 'not-sure', label: 'Not Sure' },
   ];
 
+  // Timeframe options
   const timeframeOptions = [
     { value: 'immediately', label: 'As Soon as Possible' },
     { value: '1-3-months', label: 'Within 1-3 Months' },
@@ -70,6 +64,7 @@ export const QuoteForm = ({ onSubmit }) => {
     { value: 'not-sure', label: 'Not Sure / Flexible' },
   ];
 
+  // Budget options
   const budgetOptions = [
     { value: 'under-5000', label: 'Under $5,000' },
     { value: '5000-10000', label: '$5,000 - $10,000' },
@@ -79,6 +74,7 @@ export const QuoteForm = ({ onSubmit }) => {
     { value: 'not-sure', label: 'Not Sure / Flexible' },
   ];
 
+  // Referral options
   const referralOptions = [
     { value: 'search', label: 'Search Engine (Google, Bing, etc.)' },
     { value: 'social', label: 'Social Media' },
@@ -89,153 +85,42 @@ export const QuoteForm = ({ onSubmit }) => {
     { value: 'other', label: 'Other' },
   ];
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    if (type === 'checkbox') {
-      if (name === 'serviceType') {
-        let updatedServices = [...formData.serviceType];
-        if (checked) {
-          updatedServices.push(value);
-        } else {
-          updatedServices = updatedServices.filter(service => service !== value);
-        }
-        setFormData({
-          ...formData,
-          serviceType: updatedServices,
-        });
-      }
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
-
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: '',
-      });
-    }
-  };
-
-  const validateStep = (step) => {
-    const newErrors = {};
-
-    if (step === 1) {
-      // Validate Contact Information
-      if (!formData.firstName.trim()) {
-        newErrors.firstName = 'First name is required';
-      }
-
-      if (!formData.lastName.trim()) {
-        newErrors.lastName = 'Last name is required';
-      }
-
-      if (!formData.email.trim()) {
-        newErrors.email = 'Email is required';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = 'Please enter a valid email address';
-      }
-
-      if (!formData.phone.trim()) {
-        newErrors.phone = 'Phone number is required';
-      } else if (!/^[0-9\-\+\(\) ]+$/.test(formData.phone)) {
-        newErrors.phone = 'Please enter a valid phone number';
-      }
-    } else if (step === 2) {
-      // Validate Property Information
-      if (!formData.address.trim()) {
-        newErrors.address = 'Address is required';
-      }
-
-      if (!formData.city.trim()) {
-        newErrors.city = 'City is required';
-      }
-
-      if (!formData.state.trim()) {
-        newErrors.state = 'State is required';
-      }
-
-      if (!formData.zipCode.trim()) {
-        newErrors.zipCode = 'ZIP code is required';
-      } else if (!/^\d{5}(-\d{4})?$/.test(formData.zipCode)) {
-        newErrors.zipCode = 'Please enter a valid ZIP code';
-      }
-
-      if (!formData.propertyType) {
-        newErrors.propertyType = 'Property type is required';
-      }
-    } else if (step === 3) {
-      // Validate Project Details
-      if (formData.serviceType.length === 0) {
-        newErrors.serviceType = 'Please select at least one service';
-      }
-
-      if (!formData.projectDescription.trim()) {
-        newErrors.projectDescription = 'Project description is required';
-      } else if (formData.projectDescription.trim().length < 10) {
-        newErrors.projectDescription = 'Please provide more details about your project';
-      }
-
-      if (!formData.timeframe) {
-        newErrors.timeframe = 'Please select a timeframe';
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleNext = () => {
-    if (validateStep(currentStep)) {
-      setCurrentStep(currentStep + 1);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handlePrevious = () => {
-    setCurrentStep(currentStep - 1);
-    window.scrollTo(0, 0);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (validateStep(currentStep)) {
-      setIsSubmitting(true);
-      onSubmit(formData);
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit} noValidate className="quote-form">
+      {/* Error Message */}
+      {submitError && (
+        <div className="p-4 mb-6 flex items-center bg-red-50 border-l-4 border-red-500 text-red-700">
+          <div>
+            <p className="font-medium">An error occurred</p>
+            <p>{submitError}</p>
+          </div>
+        </div>
+      )}
+
       {/* Progress Indicator */}
       <div className="mb-8">
         <div className="flex justify-between">
           <div className={`text-center flex-1 ${currentStep >= 1 ? 'text-primary' : 'text-gray-400'}`}>
             <div className={`h-8 w-8 rounded-full mx-auto flex items-center justify-center mb-2 ${currentStep >= 1 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>
-              <FaUser />
+              <FaUser className="h-4 w-4" />
             </div>
             <span className="text-sm">Contact Info</span>
           </div>
           <div className={`text-center flex-1 ${currentStep >= 2 ? 'text-primary' : 'text-gray-400'}`}>
             <div className={`h-8 w-8 rounded-full mx-auto flex items-center justify-center mb-2 ${currentStep >= 2 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>
-              <FaHome />
+              <FaHome className="h-4 w-4" />
             </div>
             <span className="text-sm">Property Info</span>
           </div>
           <div className={`text-center flex-1 ${currentStep >= 3 ? 'text-primary' : 'text-gray-400'}`}>
             <div className={`h-8 w-8 rounded-full mx-auto flex items-center justify-center mb-2 ${currentStep >= 3 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>
-              <FaTools className="fas fa-tools" />
+              <FaTools className="h-4 w-4" />
             </div>
             <span className="text-sm">Project Details</span>
           </div>
           <div className={`text-center flex-1 ${currentStep >= 4 ? 'text-primary' : 'text-gray-400'}`}>
             <div className={`h-8 w-8 rounded-full mx-auto flex items-center justify-center mb-2 ${currentStep >= 4 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>
-              <FaInfoCircle />
+              <FaInfoCircle className="h-4 w-4" />
             </div>
             <span className="text-sm">Additional Info</span>
           </div>

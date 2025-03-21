@@ -1,24 +1,23 @@
 // apps/frontend/src/app/utils/api.js
 import axios from 'axios';
+import config from './config';
 
-// Create axios instance with base URL
+// Create axios instance with base URL and configuration
 const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000, // 10 seconds timeout
+  baseURL: config.apiUrl,
+  headers: config.defaultHeaders,
+  timeout: config.requestTimeout,
 });
 
 // Add a request interceptor
 apiClient.interceptors.request.use(
-  (config) => {
+  (reqConfig) => {
     // Get token from localStorage if it exists
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem(config.auth.tokenKey);
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      reqConfig.headers.Authorization = `Bearer ${token}`;
     }
-    return config;
+    return reqConfig;
   },
   (error) => {
     return Promise.reject(error);
@@ -33,7 +32,9 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     // Handle errors
-    let errorMessage = 'An unexpected error occurred';
+    let errorMessage = config.errorHandling.useGenericMessages
+      ? config.errorHandling.genericErrorMessage
+      : 'An unexpected error occurred';
 
     if (error.response) {
       // The request was made and the server responded with a status code outside of 2xx
@@ -41,10 +42,10 @@ apiClient.interceptors.response.use(
 
       // Handle specific status codes
       if (error.response.status === 401) {
-        // Unauthorized - clear token and redirect to login
-        localStorage.removeItem('token');
-        // You might want to redirect to login page here
+        // Unauthorized - clear token
+        localStorage.removeItem(config.auth.tokenKey);
         console.log('Authentication error: Please log in again');
+        // You might want to redirect to login page here
       }
     } else if (error.request) {
       // The request was made but no response was received
@@ -58,11 +59,246 @@ apiClient.interceptors.response.use(
   }
 );
 
+// Mock service for development when backend is not available
+const mockService = {
+  getAllServices: () => {
+    return Promise.resolve({
+      success: true,
+      data: [
+        {
+          _id: '1',
+          name: 'Landscape Design',
+          slug: 'landscape-design',
+          description: 'Our landscape design services create beautiful, functional outdoor spaces tailored to your specific needs and preferences.',
+          shortDescription: 'Custom designs that blend beauty and functionality.',
+          image: '/assets/images/services/landscape-design.jpg',
+          category: 'design',
+          features: [
+            {
+              title: 'Custom Design Solutions',
+              description: 'Personalized designs that reflect your style and meet the specific needs of your property.'
+            },
+            {
+              title: 'Digital Renderings',
+              description: 'Visualize your completed project with photorealistic 3D renderings before any work begins.'
+            }
+          ],
+          benefits: [
+            'Increase property value',
+            'Create outdoor living spaces',
+            'Sustainable and environmentally friendly designs',
+            'Expert plant selection for your climate'
+          ]
+        },
+        {
+          _id: '2',
+          name: 'Hardscaping',
+          slug: 'hardscaping',
+          description: 'Our hardscaping services create durable, beautiful features like patios, walkways, and retaining walls to enhance your outdoor living space.',
+          shortDescription: 'Transform your outdoor living with patios, walkways, retaining walls, and more.',
+          image: '/assets/images/services/hardscaping.jpg',
+          category: 'hardscaping',
+          features: [
+            {
+              title: 'Custom Patios & Walkways',
+              description: 'Create functional, beautiful spaces with stone, pavers, or concrete that complement your home's architecture.'
+            },
+            {
+              title: 'Retaining Walls & Seating',
+              description: 'Add structural support, define spaces, and create additional seating with expertly constructed walls.'
+            }
+          ],
+          benefits: [
+            'Increase usable outdoor space',
+            'Add architectural interest to your landscape',
+            'Reduce erosion and improve drainage',
+            'Long-lasting materials with minimal maintenance'
+          ]
+        },
+        {
+          _id: '3',
+          name: 'Irrigation Systems',
+          slug: 'irrigation-systems',
+          description: 'Our irrigation services install efficient watering systems that keep your landscape healthy while conserving water and saving you time.',
+          shortDescription: 'Water-efficient solutions that keep your landscape healthy and save you time and money.',
+          image: '/assets/images/services/irrigation.jpg',
+          category: 'irrigation',
+          features: [
+            {
+              title: 'Custom Irrigation Design',
+              description: 'Systems designed specifically for your landscape's unique watering needs.'
+            },
+            {
+              title: 'Smart Controllers',
+              description: 'Weather-based systems that adjust watering schedules automatically based on local conditions.'
+            }
+          ],
+          benefits: [
+            'Reduce water usage and utility bills',
+            'Prevent over or under-watering',
+            'Save time with automated irrigation',
+            'Promote healthier plants and lawns'
+          ]
+        }
+      ]
+    });
+  },
+  getServiceBySlug: (slug) => {
+    const services = [
+      {
+        _id: '1',
+        name: 'Landscape Design',
+        slug: 'landscape-design',
+        description: 'Our landscape design services create beautiful, functional outdoor spaces tailored to your specific needs and preferences.',
+        shortDescription: 'Custom designs that blend beauty and functionality.',
+        image: '/assets/images/services/landscape-design.jpg',
+        category: 'design',
+        features: [
+          {
+            title: 'Custom Design Solutions',
+            description: 'Personalized designs that reflect your style and meet the specific needs of your property.'
+          },
+          {
+            title: 'Digital Renderings',
+            description: 'Visualize your completed project with photorealistic 3D renderings before any work begins.'
+          }
+        ],
+        benefits: [
+          'Increase property value',
+          'Create outdoor living spaces',
+          'Sustainable and environmentally friendly designs',
+          'Expert plant selection for your climate'
+        ],
+        priceRange: {
+          min: 1500,
+          max: 15000,
+          unit: 'per project'
+        },
+        portfolioProjects: [
+          {
+            _id: '1',
+            title: 'Tranquil Garden Retreat',
+            slug: 'tranquil-garden-retreat',
+            mainImage: '/assets/images/portfolio/project-1.jpg',
+            location: 'Metropolis, NY'
+          },
+          {
+            _id: '2',
+            title: 'Modern Backyard Transformation',
+            slug: 'modern-backyard-transformation',
+            mainImage: '/assets/images/portfolio/project-2.jpg',
+            location: 'Metropolis, NY'
+          }
+        ]
+      },
+      {
+        _id: '2',
+        name: 'Hardscaping',
+        slug: 'hardscaping',
+        description: 'Our hardscaping services create durable, beautiful features like patios, walkways, and retaining walls to enhance your outdoor living space.',
+        shortDescription: 'Transform your outdoor living with patios, walkways, retaining walls, and more.',
+        image: '/assets/images/services/hardscaping.jpg',
+        category: 'hardscaping',
+        features: [
+          {
+            title: 'Custom Patios & Walkways',
+            description: 'Create functional, beautiful spaces with stone, pavers, or concrete that complement your home's architecture.'
+          },
+          {
+            title: 'Retaining Walls & Seating',
+            description: 'Add structural support, define spaces, and create additional seating with expertly constructed walls.'
+          }
+        ],
+        benefits: [
+          'Increase usable outdoor space',
+          'Add architectural interest to your landscape',
+          'Reduce erosion and improve drainage',
+          'Long-lasting materials with minimal maintenance'
+        ],
+        priceRange: {
+          min: 5000,
+          max: 50000,
+          unit: 'per project'
+        },
+        portfolioProjects: [
+          {
+            _id: '2',
+            title: 'Modern Backyard Transformation',
+            slug: 'modern-backyard-transformation',
+            mainImage: '/assets/images/portfolio/project-2.jpg',
+            location: 'Metropolis, NY'
+          }
+        ]
+      },
+      {
+        _id: '3',
+        name: 'Irrigation Systems',
+        slug: 'irrigation-systems',
+        description: 'Our irrigation services install efficient watering systems that keep your landscape healthy while conserving water and saving you time.',
+        shortDescription: 'Water-efficient solutions that keep your landscape healthy and save you time and money.',
+        image: '/assets/images/services/irrigation.jpg',
+        category: 'irrigation',
+        features: [
+          {
+            title: 'Custom Irrigation Design',
+            description: 'Systems designed specifically for your landscape's unique watering needs.'
+          },
+          {
+            title: 'Smart Controllers',
+            description: 'Weather-based systems that adjust watering schedules automatically based on local conditions.'
+          }
+        ],
+        benefits: [
+          'Reduce water usage and utility bills',
+          'Prevent over or under-watering',
+          'Save time with automated irrigation',
+          'Promote healthier plants and lawns'
+        ],
+        priceRange: {
+          min: 2500,
+          max: 10000,
+          unit: 'per project'
+        },
+        portfolioProjects: []
+      }
+    ];
+
+    const service = services.find(s => s.slug === slug);
+    if (!service) {
+      return Promise.reject({
+        message: 'Service not found',
+        originalError: {
+          response: {
+            status: 404
+          }
+        }
+      });
+    }
+
+    return Promise.resolve({
+      success: true,
+      data: service
+    });
+  },
+  getCategories: () => {
+    return Promise.resolve({
+      success: true,
+      data: ['design', 'hardscaping', 'irrigation', 'maintenance', 'planting', 'lighting']
+    });
+  }
+};
+
+// Determine whether to use real API or mock data
+const useMockData = process.env.REACT_APP_USE_MOCK_DATA === 'true' || false;
+
 // API service for services
 export const ServicesAPI = {
   // Get all services
   getAllServices: async (filters = {}) => {
     try {
+      if (useMockData) {
+        return await mockService.getAllServices();
+      }
       return await apiClient.get('/services', { params: filters });
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -73,6 +309,9 @@ export const ServicesAPI = {
   // Get service by slug
   getServiceBySlug: async (slug) => {
     try {
+      if (useMockData) {
+        return await mockService.getServiceBySlug(slug);
+      }
       return await apiClient.get(`/services/${slug}`);
     } catch (error) {
       console.error(`Error fetching service with slug ${slug}:`, error);
@@ -83,6 +322,9 @@ export const ServicesAPI = {
   // Get service categories
   getCategories: async () => {
     try {
+      if (useMockData) {
+        return await mockService.getCategories();
+      }
       return await apiClient.get('/services/categories/all');
     } catch (error) {
       console.error('Error fetching service categories:', error);
@@ -91,7 +333,7 @@ export const ServicesAPI = {
   }
 };
 
-// API service for portfolio projects
+// API service for portfolio projects (using mock data for now)
 export const PortfolioAPI = {
   // Get all projects
   getAllProjects: async (filters = {}) => {
@@ -200,7 +442,7 @@ export const AuthAPI = {
     try {
       const response = await apiClient.post('/auth/login', credentials);
       if (response.token) {
-        localStorage.setItem('token', response.token);
+        localStorage.setItem(config.auth.tokenKey, response.token);
       }
       return response;
     } catch (error) {
@@ -213,12 +455,12 @@ export const AuthAPI = {
   logout: async () => {
     try {
       const response = await apiClient.get('/auth/logout');
-      localStorage.removeItem('token');
+      localStorage.removeItem(config.auth.tokenKey);
       return response;
     } catch (error) {
       console.error('Logout error:', error);
       // Still remove token even if API call fails
-      localStorage.removeItem('token');
+      localStorage.removeItem(config.auth.tokenKey);
       throw error;
     }
   },

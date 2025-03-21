@@ -1,17 +1,17 @@
 // apps/frontend/src/app/pages/ServicesPage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaLeaf, FaHome, FaTree, FaWater, FaSeedling, FaSun } from 'react-icons/fa';
 import { Button } from '../components/common';
 import { PageHeader } from '../components/common/PageHeader';
-import { ServicesAPI } from '../utils/api';
+import { useApp } from '../context/AppContext';
 
 const ServicesPage = () => {
-  const [services, setServices] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { services, loading, error, fetchServices } = useApp();
+  const [activeCategory, setActiveCategory] = React.useState('all');
+  const [categories, setCategories] = React.useState([
+    { id: 'all', name: 'All Services' }
+  ]);
 
   // Map icons to service types
   const serviceIcons = {
@@ -30,42 +30,27 @@ const ServicesPage = () => {
     // Set page title
     document.title = 'Our Services | Sphinx Landscapes';
 
-    // Initialize data fetching
-    fetchData();
+    // Fetch services if not already loaded
+    if (services.length === 0 && !loading.services) {
+      fetchServices();
+    }
 
-    // Scroll to top on page load
-    window.scrollTo(0, 0);
-  }, []);
-
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Fetch services
-      const servicesData = await ServicesAPI.getAllServices();
-      setServices(servicesData.data || []);
-
-      // Fetch service categories
-      const categoriesData = await ServicesAPI.getCategories();
-
-      // Transform categories data for UI
+    // Extract unique categories from services
+    if (services.length > 0) {
+      const uniqueCategories = [...new Set(services.map(service => service.category))];
       const formattedCategories = [
         { id: 'all', name: 'All Services' },
-        ...(categoriesData.data || []).map(category => ({
+        ...uniqueCategories.map(category => ({
           id: category,
           name: formatCategoryName(category)
         }))
       ];
-
       setCategories(formattedCategories);
-    } catch (err) {
-      console.error('Error fetching services data:', err);
-      setError('Unable to load services. Please try again later.');
-    } finally {
-      setLoading(false);
     }
-  };
+
+    // Scroll to top on page load
+    window.scrollTo(0, 0);
+  }, [services, loading.services, fetchServices]);
 
   // Format category name for display (convert slug to title case)
   const formatCategoryName = (category) => {
@@ -85,7 +70,7 @@ const ServicesPage = () => {
     setActiveCategory(categoryId);
   };
 
-  if (loading) {
+  if (loading.services) {
     return (
       <div className="py-20 flex justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -93,15 +78,15 @@ const ServicesPage = () => {
     );
   }
 
-  if (error) {
+  if (error.services) {
     return (
       <div className="py-20 container mx-auto px-4 text-center">
         <div className="bg-red-50 text-red-700 p-4 rounded-lg inline-block">
           <h2 className="text-xl font-bold mb-2">Error</h2>
-          <p>{error}</p>
+          <p>{error.services}</p>
           <button
             className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
-            onClick={fetchData}
+            onClick={fetchServices}
           >
             Try Again
           </button>

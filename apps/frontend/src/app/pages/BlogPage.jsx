@@ -1,291 +1,142 @@
-// apps/frontend/src/app/pages/BlogPage.jsx
+// apps/frontend/src/app/pages/QuotePage.jsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaSearch, FaCalendarAlt, FaUser, FaTags } from 'react-icons/fa';
 import { PageHeader } from '../components/common/PageHeader';
+import { QuoteForm } from '../components/quote/QuoteForm';
 import { Button } from '../components/common';
-import { BlogCard } from '../components/blog/BlogCard';
-import { BlogSidebar } from '../components/blog/BlogSidebar';
+import { FaCheck, FaTools, FaRegLightbulb, FaRegClock, FaRegSmile } from 'react-icons/fa';
 
-const BlogPage = () => {
-  const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  // Mock blog data (would normally come from an API)
-  const mockPosts = [
-    {
-      id: 1,
-      title: '10 Low-Maintenance Plants for Your Garden',
-      slug: 'low-maintenance-plants',
-      excerpt: 'Discover beautiful plants that thrive with minimal care, perfect for busy homeowners who want an attractive garden without the constant upkeep.',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eget aliquam nisl nisl vel nisl.',
-      featuredImage: '/assets/images/blog/low-maintenance-plants.jpg',
-      category: 'landscaping-tips',
-      author: 'Sarah Johnson',
-      authorImage: '/assets/images/team/sarah-johnson.jpg',
-      date: '2023-06-15',
-      tags: ['plants', 'low-maintenance', 'gardening'],
-      readTime: 5
-    },
-    {
-      id: 2,
-      title: 'How to Design the Perfect Outdoor Living Space',
-      slug: 'perfect-outdoor-living-space',
-      excerpt: 'Learn the key elements to consider when designing an outdoor living space that's both functional and beautiful for your family to enjoy year-round.',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eget aliquam nisl nisl vel nisl.',
-      featuredImage: '/assets/images/blog/outdoor-living-space.jpg',
-      category: 'design',
-      author: 'John Davis',
-      authorImage: '/assets/images/team/john-davis.jpg',
-      date: '2023-05-28',
-      tags: ['design', 'outdoor-living', 'patios'],
-      readTime: 7
-    },
-    {
-      id: 3,
-      title: 'Seasonal Lawn Care: Spring Maintenance Guide',
-      slug: 'spring-lawn-maintenance',
-      excerpt: 'Our comprehensive spring maintenance guide to help your lawn recover from winter and prepare for the growing season ahead.',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eget aliquam nisl nisl vel nisl.',
-      featuredImage: '/assets/images/blog/spring-lawn-care.jpg',
-      category: 'maintenance',
-      author: 'Emily Rodriguez',
-      authorImage: '/assets/images/team/emily-rodriguez.jpg',
-      date: '2023-04-10',
-      tags: ['lawn-care', 'spring', 'maintenance'],
-      readTime: 6
-    },
-    {
-      id: 4,
-      title: 'Water Conservation in Your Landscape',
-      slug: 'water-conservation-landscape',
-      excerpt: 'Smart strategies to create a water-efficient landscape that stays beautiful while reducing your water consumption and utility bills.',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eget aliquam nisl nisl vel nisl.',
-      featuredImage: '/assets/images/blog/water-conservation.jpg',
-      category: 'sustainability',
-      author: 'Michael Chen',
-      authorImage: '/assets/images/team/michael-chen.jpg',
-      date: '2023-03-22',
-      tags: ['water-conservation', 'sustainability', 'irrigation'],
-      readTime: 8
-    },
-    {
-      id: 5,
-      title: 'Before & After: A Stunning Backyard Transformation',
-      slug: 'backyard-transformation',
-      excerpt: 'See how we transformed a neglected backyard into a beautiful outdoor retreat with custom hardscaping, native plants, and strategic lighting.',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eget aliquam nisl nisl vel nisl.',
-      featuredImage: '/assets/images/blog/backyard-transformation.jpg',
-      category: 'projects',
-      author: 'John Davis',
-      authorImage: '/assets/images/team/john-davis.jpg',
-      date: '2023-02-15',
-      tags: ['before-after', 'transformation', 'design'],
-      readTime: 5
-    },
-    {
-      id: 6,
-      title: 'How to Choose the Right Trees for Your Property',
-      slug: 'choosing-right-trees',
-      excerpt: 'A guide to selecting trees that will thrive in your specific climate, soil conditions, and landscape design for decades to come.',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl vel ultricies lacinia, nisl nisl aliquam nisl, eget aliquam nisl nisl vel nisl.',
-      featuredImage: '/assets/images/blog/choosing-trees.jpg',
-      category: 'landscaping-tips',
-      author: 'Sarah Johnson',
-      authorImage: '/assets/images/team/sarah-johnson.jpg',
-      date: '2023-01-30',
-      tags: ['trees', 'planting', 'selection'],
-      readTime: 7
-    }
-  ];
-
-  // Mock categories (would normally come from an API)
-  const mockCategories = [
-    { id: 'landscaping-tips', name: 'Landscaping Tips', count: 2 },
-    { id: 'design', name: 'Design Ideas', count: 1 },
-    { id: 'maintenance', name: 'Maintenance', count: 1 },
-    { id: 'sustainability', name: 'Sustainability', count: 1 },
-    { id: 'projects', name: 'Project Showcases', count: 1 }
-  ];
+const QuotePage = () => {
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => {
     // Set page title
-    document.title = 'Landscaping Blog | Sphinx Landscapes';
-
-    // Simulate API fetch
-    setTimeout(() => {
-      setPosts(mockPosts);
-      setFilteredPosts(mockPosts);
-      setCategories(mockCategories);
-      setLoading(false);
-    }, 800);
+    document.title = 'Request a Quote | Sphinx Landscapes';
 
     // Scroll to top on page load
     window.scrollTo(0, 0);
   }, []);
 
-  // Filter posts when category or search term changes
-  useEffect(() => {
-    let results = [...posts];
-
-    // Filter by category
-    if (activeCategory !== 'all') {
-      results = results.filter(post => post.category === activeCategory);
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      results = results.filter(
-        post =>
-          post.title.toLowerCase().includes(term) ||
-          post.excerpt.toLowerCase().includes(term) ||
-          post.tags.some(tag => tag.toLowerCase().includes(term))
-      );
-    }
-
-    setFilteredPosts(results);
-  }, [activeCategory, searchTerm, posts]);
-
-  // Handle category change
-  const handleCategoryChange = (categoryId) => {
-    setActiveCategory(categoryId);
+  const handleFormSubmit = (formData) => {
+    // The form component will handle the API call
+    // This is a callback for when the form has been successfully submitted
+    setFormSubmitted(true);
   };
-
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  // Handle search form submission
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    // No need to do anything else as the useEffect will handle filtering
-  };
-
-  if (loading) {
-    return (
-      <div className="py-20 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <main>
       <PageHeader
-        title="Landscaping Blog"
-        description="Expert tips, ideas, and inspiration to help you create and maintain a beautiful landscape."
-        bgImage="/assets/images/blog/blog-header.jpg"
-        breadcrumbs={[{ text: 'Blog', link: '/blog' }]}
+        title="Request a Free Quote"
+        description="Tell us about your project and we'll provide a detailed estimate for your landscaping needs."
+        bgImage="/assets/images/quote/quote-header.jpg"
+        breadcrumbs={[{ text: 'Quote', link: '/quote' }]}
       />
 
-      <section className="py-16">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Main Content */}
-            <div className="lg:col-span-2">
-              {/* Mobile Search and Filter */}
-              <div className="mb-8 lg:hidden">
-                <form onSubmit={handleSearchSubmit} className="mb-6">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search articles..."
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                      className="w-full py-3 px-4 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary"
-                    >
-                      <FaSearch />
-                    </button>
-                  </div>
-                </form>
+          {formSubmitted ? (
+            <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8">
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center h-16 w-16 bg-green-100 rounded-full mb-4">
+                  <FaCheck className="h-8 w-8 text-green-600" />
+                </div>
+                <h2 className="text-3xl font-heading font-semibold mb-4">Thank You!</h2>
+                <p className="text-lg text-gray-600">
+                  Your quote request has been successfully submitted. We appreciate your interest in Sphinx Landscapes.
+                </p>
+              </div>
 
-                <div className="mb-6">
-                  <label htmlFor="mobile-category" className="block text-gray-700 font-medium mb-2">
-                    Filter by Category
-                  </label>
-                  <select
-                    id="mobile-category"
-                    value={activeCategory}
-                    onChange={(e) => handleCategoryChange(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="all">All Categories</option>
-                    {categories.map(category => (
-                      <option key={category.id} value={category.id}>
-                        {category.name} ({category.count})
-                      </option>
-                    ))}
-                  </select>
+              <div className="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 className="text-xl font-heading font-medium mb-4">What Happens Next?</h3>
+                <ol className="space-y-4">
+                  <li className="flex">
+                    <div className="flex-shrink-0 h-6 w-6 bg-primary text-white rounded-full flex items-center justify-center mr-3 mt-0.5">1</div>
+                    <div>
+                      <p className="font-medium">Initial Review</p>
+                      <p className="text-gray-600">One of our team members will review your request within 24 hours.</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <div className="flex-shrink-0 h-6 w-6 bg-primary text-white rounded-full flex items-center justify-center mr-3 mt-0.5">2</div>
+                    <div>
+                      <p className="font-medium">Contact</p>
+                      <p className="text-gray-600">We'll reach out to discuss your project in more detail and arrange a site visit if needed.</p>
+                    </div>
+                  </li>
+                  <li className="flex">
+                    <div className="flex-shrink-0 h-6 w-6 bg-primary text-white rounded-full flex items-center justify-center mr-3 mt-0.5">3</div>
+                    <div>
+                      <p className="font-medium">Detailed Quote</p>
+                      <p className="text-gray-600">We'll provide a comprehensive quote tailored to your specific needs and budget.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+
+              <p className="text-center mb-6">
+                If you have any questions in the meantime, please don't hesitate to contact us.
+              </p>
+
+              <div className="text-center">
+                <Button
+                  as="link"
+                  to="/"
+                  variant="primary"
+                >
+                  Return to Home
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              <div className="lg:col-span-2">
+                <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
+                  <h2 className="text-2xl font-heading font-semibold mb-6">Tell Us About Your Project</h2>
+                  <QuoteForm onSubmitSuccess={handleFormSubmit} />
                 </div>
               </div>
 
-              {/* Blog Posts */}
-              {filteredPosts.length > 0 ? (
-                <div className="space-y-10">
-                  {filteredPosts.map(post => (
-                    <BlogCard
-                      key={post.id}
-                      title={post.title}
-                      excerpt={post.excerpt}
-                      slug={post.slug}
-                      featuredImage={post.featuredImage}
-                      category={post.category}
-                      categoryName={categories.find(cat => cat.id === post.category)?.name}
-                      author={post.author}
-                      authorImage={post.authorImage}
-                      date={post.date}
-                      readTime={post.readTime}
-                    />
-                  ))}
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+                  <h3 className="text-xl font-heading font-semibold mb-4">Why Request a Quote?</h3>
+                  <ul className="space-y-4">
+                    <li className="flex">
+                      <FaTools className="text-primary mt-1 mr-3 flex-shrink-0" />
+                      <p className="text-gray-600">Get a detailed breakdown of services and materials for your project.</p>
+                    </li>
+                    <li className="flex">
+                      <FaRegLightbulb className="text-primary mt-1 mr-3 flex-shrink-0" />
+                      <p className="text-gray-600">Receive expert recommendations tailored to your specific needs.</p>
+                    </li>
+                    <li className="flex">
+                      <FaRegClock className="text-primary mt-1 mr-3 flex-shrink-0" />
+                      <p className="text-gray-600">Understand timeline expectations for your landscaping project.</p>
+                    </li>
+                    <li className="flex">
+                      <FaRegSmile className="text-primary mt-1 mr-3 flex-shrink-0" />
+                      <p className="text-gray-600">No obligation - our quotes are free and pressure-free.</p>
+                    </li>
+                  </ul>
                 </div>
-              ) : (
-                <div className="text-center py-16 bg-gray-50 rounded-lg">
-                  <h3 className="text-xl font-medium text-gray-700 mb-2">No articles found</h3>
-                  <p className="text-gray-500 mb-6">
-                    Try adjusting your search or filter to find what you're looking for.
+
+                <div className="bg-primary-light bg-opacity-10 rounded-lg p-6 md:p-8">
+                  <h3 className="text-xl font-heading font-semibold mb-4">Have Questions?</h3>
+                  <p className="text-gray-600 mb-4">
+                    If you prefer to speak with someone directly before requesting a quote, we're here to help.
                   </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      setActiveCategory('all');
-                      setSearchTerm('');
-                    }}
-                  >
-                    Reset Filters
-                  </Button>
+                  <p className="font-medium mb-2">Call us:</p>
+                  <p className="text-primary text-xl font-medium mb-4">(555) 123-4567</p>
+                  <p className="font-medium mb-2">Email us:</p>
+                  <p className="text-primary text-xl font-medium">
+                    <a href="mailto:info@sphinxlandscapes.com" className="hover:underline">info@sphinxlandscapes.com</a>
+                  </p>
                 </div>
-              )}
-
-              {/* Pagination would go here */}
+              </div>
             </div>
-
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <BlogSidebar
-                categories={categories}
-                activeCategory={activeCategory}
-                onCategoryChange={handleCategoryChange}
-                searchTerm={searchTerm}
-                onSearchChange={handleSearchChange}
-                onSearchSubmit={handleSearchSubmit}
-                posts={posts}
-              />
-            </div>
-          </div>
+          )}
         </div>
       </section>
     </main>
   );
 };
 
-export default BlogPage;
+export default QuotePage;

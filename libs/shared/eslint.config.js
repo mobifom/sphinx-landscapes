@@ -1,6 +1,8 @@
+import e from 'express';
+
 const baseConfig = require('../../eslint.config.js');
 
-module.exports = [
+export default [
   ...baseConfig,
   {
     files: ['**/*.json'],
