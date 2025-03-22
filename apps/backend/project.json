@@ -5,7 +5,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/backend",
-        "main": "apps/backend/src/app.js",
+        "main": "apps/backend/src/app.jsx",
         "tsConfig": "apps/backend/tsconfig.app.json",
         "assets": ["apps/backend/src/assets"]
       }

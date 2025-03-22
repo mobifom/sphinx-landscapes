@@ -1,9 +1,9 @@
 // apps/frontend/src/app/App.jsx
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Navbar, Footer } from './components/common';
-import AppRoutes from './routes';
-import { AppProvider } from './context/AppContext';
+import { Navbar, Footer } from './app/components/common';
+import AppRoutes from './app/routes';
+import { AppProvider } from './app/context/AppContext';
 
 function App() {
   return (
