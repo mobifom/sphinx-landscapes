@@ -42,7 +42,7 @@ const BlogPostPage = () => {
         <p>Varieties like Feather Reed Grass, Fountain Grass, and Blue Fescue add movement, texture, and year-round interest to the landscape. Most require only annual trimming in late winter before new growth appears.</p>
 
         <h3>3. Russian Sage</h3>
-        <p>This silver-leaved perennial produces lavender-blue flower spikes from mid-summer through fall. Once established, it's extremely drought-tolerant and deer-resistant. Its aromatic foliage helps deter many common garden pests.</p>
+        <p>This silver-leaved perennial produces lavender-blue flower spikes from mid-summer through fall. Once established, it is extremely drought-tolerant and deer-resistant. Its aromatic foliage helps deter many common garden pests.</p>
 
         <h3>4. Black-Eyed Susan</h3>
         <p>These cheerful native wildflowers produce golden-yellow blooms from mid-summer until frost. They naturalize easily, are attractive to pollinators, and require minimal care beyond occasional deadheading to extend the bloom period.</p>
@@ -90,7 +90,7 @@ const BlogPostPage = () => {
       id: 2,
       title: 'How to Design the Perfect Outdoor Living Space',
       slug: 'perfect-outdoor-living-space',
-      excerpt: 'Learn the key elements to consider when designing an outdoor living space that's both functional and beautiful for your family to enjoy year-round.',
+      excerpt: 'Learn the key elements to consider when designing an outdoor living space that is both functional and beautiful for your family to enjoy year-round.',
       content: `
         <p>Your backyard has the potential to be so much more than just a lawn with a few plants. With thoughtful design, it can become an extension of your home—a place for relaxation, entertainment, and connection with nature. In this article, we'll guide you through the essential elements of creating the perfect outdoor living space.</p>
 
@@ -114,7 +114,7 @@ const BlogPostPage = () => {
           <li><strong>Gravel or crushed stone</strong> - A more affordable, permeable option</li>
           <li><strong>Artificial turf</strong> - Low-maintenance alternative to natural grass</li>
         </ul>
-        <p>Consider factors like maintenance requirements, permeability for drainage, and how the material complements your home's architecture.</p>
+        <p>Consider factors like maintenance requirements, permeability for drainage, and how the material complements your home is architecture.</p>
 
         <h3>2. Comfortable Seating</h3>
         <p>The right seating can make or break an outdoor space. Depending on your needs, consider:</p>
@@ -328,7 +328,7 @@ const BlogPostPage = () => {
 
         <h2>The Benefits of Water-Efficient Landscaping</h2>
 
-        <p>Before diving into specific strategies, it's worth understanding the many advantages of a water-conserving landscape:</p>
+        <p>Before diving into specific strategies, it is worth understanding the many advantages of a water-conserving landscape:</p>
 
         <ul>
           <li>Reduced water bills, especially during summer months</li>
@@ -465,7 +465,7 @@ const BlogPostPage = () => {
           <li>Installing one or two rain barrels</li>
         </ul>
 
-        <p>Over time, you can transform your entire landscape into a beautiful, water-efficient showcase that's better for the environment and your budget.</p>
+        <p>Over time, you can transform your entire landscape into a beautiful, water-efficient showcase that is better for the environment and your budget.</p>
 
         <p>Ready to make your landscape more water-efficient? Contact us for a consultation to develop a customized water conservation plan for your property.</p>
       `,
@@ -554,7 +554,7 @@ const BlogPostPage = () => {
       <main>
         <PageHeader
           title="Blog Post Not Found"
-          description="The article you're looking for may have been moved or deleted."
+          description="The article you are looking for may have been moved or deleted."
           bgImage="/assets/images/blog/blog-header.jpg"
         />
 

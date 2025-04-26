@@ -5,8 +5,11 @@
  */
 const config = {
   // Base API URL based on environment
-  apiUrl: process.env.REACT_APP_API_URL || '/api',
-
+  apiUrl:
+  // Try to access env variables that Nx/webpack would inject
+  (typeof window !== 'undefined' && window.ENV && window.ENV.API_URL) ||
+  // Or fall back to default
+  '/api',
   // Default timeout for API requests (milliseconds)
   requestTimeout: 30000,
 

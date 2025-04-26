@@ -101,7 +101,7 @@ const mockService = {
           features: [
             {
               title: 'Custom Patios & Walkways',
-              description: 'Create functional, beautiful spaces with stone, pavers, or concrete that complement your home's architecture.'
+              description: 'Create functional, beautiful spaces with stone, pavers, or concrete that complement your home is architecture.'
             },
             {
               title: 'Retaining Walls & Seating',
@@ -126,7 +126,7 @@ const mockService = {
           features: [
             {
               title: 'Custom Irrigation Design',
-              description: 'Systems designed specifically for your landscape's unique watering needs.'
+              description: 'Systems designed specifically for your landscape is unique watering needs.'
             },
             {
               title: 'Smart Controllers',
@@ -202,7 +202,7 @@ const mockService = {
         features: [
           {
             title: 'Custom Patios & Walkways',
-            description: 'Create functional, beautiful spaces with stone, pavers, or concrete that complement your home's architecture.'
+            description: 'Create functional, beautiful spaces with stone, pavers, or concrete that complement your home is architecture.'
           },
           {
             title: 'Retaining Walls & Seating',
@@ -241,7 +241,7 @@ const mockService = {
         features: [
           {
             title: 'Custom Irrigation Design',
-            description: 'Systems designed specifically for your landscape's unique watering needs.'
+            description: 'Systems designed specifically for your landscape is unique watering needs.'
           },
           {
             title: 'Smart Controllers',
@@ -289,7 +289,7 @@ const mockService = {
 };
 
 // Determine whether to use real API or mock data
-const useMockData = process.env.REACT_APP_USE_MOCK_DATA === 'true' || false;
+const useMockData =  false;
 
 // API service for services
 export const ServicesAPI = {

@@ -1,23 +1,17 @@
-// apps/frontend/src/app/App.jsx
+// apps/frontend/src/App.
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Navbar, Footer } from './app/components/common';
-import AppRoutes from './app/routes';
-import { AppProvider } from './app/context/AppContext';
 
 function App() {
   return (
-    <AppProvider>
-      <Router>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <div className="flex-grow pt-16">
-            <AppRoutes />
-          </div>
-          <Footer />
-        </div>
-      </Router>
-    </AppProvider>
+    <div>
+      <Routes>
+        <Route path="/" element="Home" />
+        <Route path="/about" element="About"/>
+        {/* Add other routes as needed */}
+      </Routes>
+      </div>
   );
 }
 

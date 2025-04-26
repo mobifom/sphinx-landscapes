@@ -4,7 +4,7 @@ const BlogPostPage = () => {
   return (
     <div>
       <h1>Blog Post</h1>
-      <p>Creating an outdoor living space that's both functional and beautiful...</p>
+      <p>Creating an outdoor living space that is both functional and beautiful...</p>
     </div>
   );
 };

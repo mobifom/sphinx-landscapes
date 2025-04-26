@@ -66,7 +66,7 @@ const ServiceDetailPage = () => {
           </h2>
           <p className="text-gray-600 mb-8">
             {error === 'Service not found'
-              ? 'The service you're looking for does not exist or has been removed.'
+              ? 'The service you are looking for does not exist or has been removed.'
               : error
             }
           </p>
@@ -91,7 +91,7 @@ const ServiceDetailPage = () => {
     return (
       <div className="py-20 container mx-auto px-4 text-center">
         <h2 className="text-2xl font-heading font-semibold mb-4">Service Not Found</h2>
-        <p className="text-gray-600 mb-8">The service you're looking for does not exist or has been removed.</p>
+        <p className="text-gray-600 mb-8">The service you are looking for does not exist or has been removed.</p>
         <Link to="/services" className="inline-flex items-center justify-center px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-md transition-colors">
           View All Services
         </Link>

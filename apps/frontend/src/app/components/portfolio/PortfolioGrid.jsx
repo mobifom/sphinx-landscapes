@@ -1,7 +1,9 @@
+// apps/frontend/src/app/components/portfolio/PortfolioGrid.jsx
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Search, Filter } from 'lucide-react';
+import { FaArrowRight, FaSearch, FaFilter } from 'react-icons/fa';
 
-const PortfolioGallery = ({ featured = false, maxItems = 6 }) => {
+// Changed the component name from PortfolioGallery to PortfolioGrid to match import
+export const PortfolioGrid = ({ featured = false, maxItems = 6 }) => {
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -187,7 +189,7 @@ const PortfolioGallery = ({ featured = false, maxItems = 6 }) => {
                 className="flex items-center justify-between w-full p-3 bg-white border border-gray-300 rounded-md shadow-sm"
               >
                 <div className="flex items-center">
-                  <Filter className="mr-2 text-primary" size={16} />
+                  <FaFilter className="mr-2 text-primary" size={16} />
                   <span>Filter Projects</span>
                 </div>
                 <span>{activeCategory !== 'all' ? categories.find(c => c.id === activeCategory)?.name : 'All Projects'}</span>
@@ -232,7 +234,7 @@ const PortfolioGallery = ({ featured = false, maxItems = 6 }) => {
                 <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-300 group-hover:bg-opacity-40">
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="bg-primary text-white p-3 rounded-full">
-                      <Search size={20} />
+                      <FaSearch size={20} />
                     </div>
                   </div>
                 </div>
@@ -260,7 +262,7 @@ const PortfolioGallery = ({ featured = false, maxItems = 6 }) => {
                   onClick={() => handleViewProject(project.slug)}
                   className="inline-flex items-center font-medium text-primary hover:text-primary-dark transition-colors"
                 >
-                  View Project <ArrowRight className="ml-2" size={14} />
+                  View Project <FaArrowRight className="ml-2" size={14} />
                 </button>
               </div>
             </div>
@@ -273,7 +275,7 @@ const PortfolioGallery = ({ featured = false, maxItems = 6 }) => {
               onClick={handleViewAllProjects}
               className="inline-flex items-center justify-center px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-md transition-colors"
             >
-              View All Projects <ArrowRight className="ml-2" size={16} />
+              View All Projects <FaArrowRight className="ml-2" size={16} />
             </button>
           </div>
         )}
@@ -291,4 +293,5 @@ const PortfolioGallery = ({ featured = false, maxItems = 6 }) => {
   );
 };
 
-export default PortfolioGallery;
+// Also adding a default export for compatibility
+export default PortfolioGrid;

@@ -193,7 +193,7 @@ const ProjectDetailPage = () => {
       <main>
         <PageHeader
           title="Project Not Found"
-          description="The project you're looking for may have been moved or deleted."
+          description="The project you are looking for may have been moved or deleted."
           bgImage="/assets/images/portfolio/portfolio-header.jpg"
         />
 
